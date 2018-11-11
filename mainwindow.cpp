@@ -5,6 +5,7 @@
 
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent)
 {
+    snake(1);
 }
 
 MainWindow* MainWindow::NewInstance()
@@ -18,6 +19,7 @@ MainWindow* MainWindow::NewInstance()
         delete ret;
         ret = NULL;
     }
+
     return ret;
 }
 
@@ -25,7 +27,7 @@ bool MainWindow::construct()
 {
     bool ret = true;
 
-    setMinimumSize(800,500);
+    setMinimumSize(800,600);
 
     ret = ret && initMenuBar();
     ret = ret && initGame();
@@ -52,10 +54,32 @@ bool MainWindow::initGame_key()
 
     if(ret)
     {
-        ret = ret && makeAction(short_cut,this,Qt::Key_Right);
+        ret = ret && makeShortCut(short_cut,this,Qt::Key_Right);
+        if(ret)
+        {
+            connect(short_cut,SIGNAL(activated()),this,SLOT(Move_Right()));
+            shortcuts.push_back(short_cut);
+        }
+
+        ret = ret && makeShortCut(short_cut,this,Qt::Key_Left);
         if(ret)
         {
             connect(short_cut,SIGNAL(activated()),this,SLOT(Move_Left()));
+            shortcuts.push_back(short_cut);
+        }
+
+        ret = ret && makeShortCut(short_cut,this,Qt::Key_Up);
+        if(ret)
+        {
+            connect(short_cut,SIGNAL(activated()),this,SLOT(Move_Up()));
+            shortcuts.push_back(short_cut);
+        }
+
+        ret = ret && makeShortCut(short_cut,this,Qt::Key_Down);
+        if(ret)
+        {
+            connect(short_cut,SIGNAL(activated()),this,SLOT(Move_Down()));
+            shortcuts.push_back(short_cut);
         }
     }
 
@@ -67,6 +91,7 @@ bool MainWindow::initGame()
     bool ret = true;
 
     ret = ret && initGame_key();
+
 
     if(ret)
     {
@@ -114,6 +139,7 @@ bool MainWindow::initOptionMenu(QMenuBar* MenuBar)
         delete menu;
     }
 
+
     return ret;
 }
 
@@ -133,7 +159,7 @@ bool MainWindow::makeAction(QAction*& action,QWidget* parent, QString text)
     return ret;
 }
 
-bool MainWindow::makeAction(QShortcut*& Short_cut,QWidget* parent, int key)
+bool MainWindow::makeShortCut(QShortcut*& Short_cut,QWidget* parent, int key)
 {
     bool ret = true;
 
@@ -153,5 +179,8 @@ bool MainWindow::makeAction(QShortcut*& Short_cut,QWidget* parent, int key)
 
 MainWindow::~MainWindow()
 {
-
+    for(auto iter = shortcuts.begin();shortcuts.size()>0;)
+    {
+        iter = shortcuts.erase(iter);
+    }
 }

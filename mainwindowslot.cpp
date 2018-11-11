@@ -1,9 +1,21 @@
 #include "mainwindow.h"
-#include <QPainter>
+#include <QMessageBox>
 
+int MainWindow::showGameOverMessage()
+{
+    QMessageBox msg(this);
+
+    msg.setWindowTitle("Dialog");
+    msg.setText("Game Over!");
+    msg.setIcon(QMessageBox::Critical);
+    msg.setStandardButtons(QMessageBox::Ok);
+    return msg.exec();
+}
 void MainWindow::BeginGame()
 {
-     m_timer.start(150);        //timer begin running
+
+     m_timer.start(50);        //timer begin running
+     qsrand(QTime::currentTime().second() * 1000 + QTime::currentTime().msec());
 }
 
 void MainWindow::StopGame()
@@ -13,7 +25,7 @@ void MainWindow::StopGame()
 
 void MainWindow::Timer_Timeout()
 {
-     update();      //refresh window,call painevent() every
+     repaint();      //refresh window,call painevent() every
 }
 
 void MainWindow::paintEvent(QPaintEvent *)
@@ -22,32 +34,42 @@ void MainWindow::paintEvent(QPaintEvent *)
     {
         QPainter painter(this);
 
-        painter.fillRect(0,0,this->width(),this->height(),Qt::black);
+        painter.fillRect(0,this->menuBar()->height(),this->width(),this->height(),Qt::black);
 
         if(snake.Dir != -1)
         {
-            step += 5;
-            painter.fillRect(snake.body[0].x + step,snake.body[0].y,10,10,Qt::red);
+            snake.moveSnake();      //改变蛇的方向
+            snake.DrawSnake(painter);   //draw snake on screen;
+            if(snake.EatBody())
+            {
+                StopGame();
+                showGameOverMessage();  //若吃的到自己，则弹出对话框说游戏终止；///重新开始后，其他还未初始化；
+            }
         }
         else
         {
-            painter.fillRect(snake.body[0].x,snake.body[0].y,10,10,Qt::red);
+            snake.DrawSnake(painter);
         }
     }
 }
+
 void MainWindow::Move_Up()
 {
-
+    if(snake.Dir != Snake::down)
+        snake.Dir = Snake::up;
 }
 void MainWindow::Move_Down()
 {
-
+    if(snake.Dir != Snake::up)
+        snake.Dir = Snake::down;
 }
 void MainWindow::Move_Left()
 {
-    snake.Dir = Snake::left;
+    if(snake.Dir != Snake::right)
+        snake.Dir = Snake::left;
 }
 void MainWindow::Move_Right()
 {
-
+    if(snake.Dir != Snake::left)
+        snake.Dir = Snake::right;
 }

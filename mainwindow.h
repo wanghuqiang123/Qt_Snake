@@ -6,10 +6,12 @@
 #include <QTimer>
 #include <QMenuBar>
 #include <QImage>
-#include "snake.h"
 #include <QAction>
 #include <QList>
 #include <QShortcut>
+
+#include "snake.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -17,18 +19,18 @@ class MainWindow : public QMainWindow
 private:
     Snake  snake;
     QTimer m_timer;
-    QList<QAction*>actions_list;
-    long step;
+    QList<QShortcut *>shortcuts;
 
     MainWindow(QWidget *parent = 0);
 
+    int showGameOverMessage();
     bool construct();
     bool initMenuBar();
     bool initOptionMenu(QMenuBar*);
     bool initGame();
     bool initGame_key();
     bool makeAction(QAction*& action,QWidget* parent, QString text);
-    bool makeAction(QShortcut*& Short_cut,QWidget* parent, int key);
+    bool makeShortCut(QShortcut*& Short_cut,QWidget* parent, int key);
     //rewrite event ;
     void paintEvent(QPaintEvent *event);
 public:

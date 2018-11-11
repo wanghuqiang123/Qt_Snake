@@ -27,8 +27,10 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     mainwindowslot.cpp \
-    snake.cpp
+    snake.cpp \
+    food.cpp
 
 HEADERS += \
         mainwindow.h \
-    snake.h
+    snake.h \
+    food.h
